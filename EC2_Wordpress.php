@@ -1,6 +1,6 @@
 <?php
   if(isset($_POST['start'])) { 
-            shell_exec('aws cloudformation create-stack --stack-name Wordpress --template-body file://Template2(Wordpress).yaml --parameters ParameterKey=KeyName,ParameterValue=*Your_KeyPair*');
+            shell_exec('aws cloudformation create-stack --stack-name Wordpress --template-body file://Template2(Wordpress).yaml --parameters ParameterKey=KeyName,ParameterValue=*KeyPairName*');
         } 
         if(isset($_POST['end'])) { 
             shell_exec('aws cloudformation delete-stack --stack-name Wordpress');
@@ -33,11 +33,11 @@
      <input type="submit" name="end" class="button buttonEnd" value="End Lab">
      <a href="https://signin.aws.amazon.com/console" class="button buttonLink" target="_blank">AWS Console</a>
     <div class="inputBox">
-      <label class="textHeading">Username</label><input type="text" name="" id="uname" readonly="" value="*Your Username*">
+      <label class="textHeading">Username</label><input type="text" name="" id="uname" readonly="" value="*Username*">
       <img src="image/copy.jpg" height=20px width=20px  class="copy" onclick="copyUsername();">
     </div>
     <div class="inputBox">
-      <label class="textHeading">Password</label><input type="text" name="" id="password" readonly="" value="*Your Password*">
+      <label class="textHeading">Password</label><input type="text" name="" id="password" readonly="" value="*Password*">
       <img src="image/copy.jpg" height=20px width=20px  class="copy" onclick="copyPassword();">
     </div>
   </div>
@@ -71,13 +71,13 @@
             <li>
             <strong>Site Title:</strong> Enter any title you wish</li>
             <li>
-            <strong>Username:</strong> <input readonly="" class="copyable-inline-input" size="7" type="text" value="student">
+            <strong>Username:</strong> <input readonly="" size="7" type="text" value="student">
             </li>
             <li>
-            <strong>Password:</strong> <input readonly="" class="copyable-inline-input" size="11" type="text" value="a34%#adhAE3">
+            <strong>Password:</strong> <input readonly="" size="11" type="text" value="a34%#adhAE3">
             </li>
             <li>
-            <strong>Your Email:</strong> <input readonly="" class="copyable-inline-input" size="19" type="text" value="student@example.com">
+            <strong>Your Email:</strong> <input readonly=""  size="19" type="text" value="student@example.com">
             </li>
             <li>
             <strong>Search Engine Visibility:</strong> Leave deselected</li>
