@@ -1,0 +1,341 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  NameOfService:
+    Default: RDS
+    Description: "The name of service this stack is used for."
+    Type: String
+  KeyName:
+    Description: Name of existing EC2 KeyPair to enable SSH access into the Server
+    Type: AWS::EC2::KeyPair::KeyName
+  DBName: 
+    Default: MyDatabase
+    Description: "The database name"
+    Type: String
+    MinLength: 1
+    MaxLength: 64
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    ConstraintDescription: "must begin with a letter and contain only alphanumeric characters."
+  DBUsername: 
+    Default: admin
+    NoEcho: true
+    Description: "The database admin account username"
+    Type: String
+    MinLength: 1
+    MaxLength: 16
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    ConstraintDescription: "must begin with a letter and contain only alphanumeric characters."
+  DBPassword: 
+    Default: password
+    NoEcho: true
+    Description: "The database admin account password"
+    Type: String
+    MinLength: 8
+    MaxLength: 41
+    AllowedPattern: "[a-zA-Z0-9]*"
+    ConstraintDescription: "must contain only alphanumeric characters."
+  DBClass: 
+    Default: db.t2.micro
+    Description: "Database instance class"
+    Type: String
+    AllowedValues: 
+     - "db.t2.micro"
+     - "db.t2.small"
+     - "db.t2.large"
+     - "db.t2.xlarge"
+     - "db.t2.2xlarge"
+    ConstraintDescription: "must select a valid database instance type."
+  DBAllocatedStorage: 
+    Default: 5
+    Description: "The size of the database (Gb)"
+    Type: Number
+    MinValue: 5
+    MaxValue: 1024
+    ConstraintDescription: "must be between 5 and 1024Gb."
+Mappings:
+  RegionMap:
+    us-east-1:
+      AMI: ami-1853ac65
+    us-west-1:
+      AMI: ami-bf5548df
+    eu-west-1:
+      AMI: ami-3bfab942
+    ap-southeast-1:
+      AMI: ami-e2adf99e
+    ap-southeast-2:
+      AMI: ami-43874721
+    ap-south-1:
+      AMI: ami-0e306788ff2473ccb
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      Tags:
+      - Key: Name
+        Value: Lab VPC
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: Lab Internet Gateway
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: !Select 
+        - '0'
+        - !GetAZs ''
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Public Subnet 1
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select 
+        - '0'
+        - !GetAZs ''
+      Tags:
+        - Key: Name
+          Value: Private Subnet 1
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select 
+        - '1'
+        - !GetAZs ''
+      Tags:
+        - Key: Name
+          Value: Private Subnet 2
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: Public Route Table
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: Private Route Table
+
+  PrivateSubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet1
+      RouteTableId: !Ref PrivateRouteTable
+
+  #Left for testing  
+  PrivateSubnetRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref PrivateRouteTable
+
+  WebServerSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22 and 80
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Metadata:
+      AWS::CloudFormation::Init:
+        config:
+          packages:
+            yum:
+              httpd: []
+              php: []
+              mysql: []
+          files:
+            /var/www/html/index.php:
+              content: !Join 
+                - ''
+                - - |
+                    <html>
+                  - |2
+                    <head>
+                  - |2
+                    <title>AWS CloudFormation PHP Sample</title>
+                  - |2
+                    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+                  - |2
+                    </head>
+                  - |2
+                    <body>
+                  - |2
+                    <h1>Welcome to the AWS CloudFormation PHP Sample</h1>
+                  - |2
+                    <p/>
+                  - |2
+                    <?php
+                  - |2
+                    // Print out the current data and time
+                  - |2
+                    print "The Current Date and Time is: <br/>";
+                  - |2
+                    print date("g:i A l, F j Y.");
+                  - |2
+                    ?>
+                  - |2
+                    </body>
+                  - |
+                    </html>
+              mode: '000600'
+              owner: apache
+              group: apache
+            /etc/cfn/cfn-hup.conf:
+              content: !Join 
+                - ''
+                - - |
+                    [main]
+                  - stack=
+                  - !Ref 'AWS::StackId'
+                  - |+
+
+                  - region=
+                  - !Ref 'AWS::Region'
+                  - |+
+
+              mode: '000400'
+              owner: root
+              group: root
+            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
+              content: !Join 
+                - ''
+                - - |
+                    [cfn-auto-reloader-hook]
+                  - |
+                    triggers=post.update
+                  - >
+                    path=Resources.WebServerInstance.Metadata.AWS::CloudFormation::Init
+                  - 'action=/opt/aws/bin/cfn-init -v '
+                  - '         --stack '
+                  - !Ref 'AWS::StackName'
+                  - '         --resource EC2Instance '
+                  - '         --region '
+                  - !Ref 'AWS::Region'
+                  - |+
+
+                  - |
+                    runas=root
+          services:
+            sysvinit:
+              httpd:
+                enabled: 'true'
+                ensureRunning: 'true'
+              cfn-hup:
+                enabled: 'true'
+                ensureRunning: 'true'
+                files:
+                  - /etc/cfn/cfn-hup.conf
+                  - /etc/cfn/hooks.d/cfn-auto-reloader.conf
+    Properties:
+      InstanceType: t2.micro
+      ImageId:
+        Fn::FindInMap:
+          - RegionMap
+          - !Ref AWS::Region
+          - AMI
+      SubnetId: !Ref PublicSubnet1
+      SecurityGroupIds:
+        - !Ref WebServerSG
+      Tags:
+        - Key: "Name"
+          Value: !Ref NameOfService
+      KeyName: !Ref KeyName
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash -xe
+            # Ensure AWS CFN Bootstrap is latest
+            yum install -y aws-cfn-bootstrap
+            # Install files and packages from metadata
+            /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource EC2Instance --region ${AWS::Region}
+
+  MyDBSubnetGroup: 
+    Type: AWS::RDS::DBSubnetGroup
+    Properties: 
+      DBSubnetGroupName: DBSubnetGroup
+      DBSubnetGroupDescription: "Subnets available for the RDS DB Instance"
+      SubnetIds: 
+      - !Ref PrivateSubnet1
+      - !Ref PrivateSubnet2
+  
+  DBSecurityGroup: 
+    Type: AWS::RDS::DBSecurityGroup
+    Properties: 
+      DBSecurityGroupIngress:
+        EC2SecurityGroupId: !Ref WebServerSG
+      EC2VpcId: !Ref VPC
+      GroupDescription: Security group for RDS DB Instance
+
+  DBInstance: 
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: !Ref DBName
+      AllocatedStorage: !Ref DBAllocatedStorage
+      DBInstanceClass: !Ref DBClass
+      Engine: MySQL
+      EngineVersion: 8.0.20
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      MultiAZ: false
+      Port: 3306
+      PubliclyAccessible: false
+      DBSubnetGroupName: !Ref MyDBSubnetGroup
+      DBSecurityGroups: 
+      - !Ref DBSecurityGroup
+
+Outputs:
+  Website:
+    Description: Public DNS for EC2 EC2Instance
+    Value: !Sub 'http://${EC2Instance.PublicDnsName}'
+  RDSInstanceId:
+    Description: "Instance Id of RDS Instance"
+    Value: !Ref DBInstance
