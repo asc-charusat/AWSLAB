@@ -1,6 +1,6 @@
 <?php
   if(isset($_POST['start'])) { 
-            shell_exec('aws cloudformation create-stack --stack-name Wordpress --template-body file://Template2(Wordpress).yaml --parameters ParameterKey=KeyName,ParameterValue=demo');
+            shell_exec('aws cloudformation create-stack --stack-name Wordpress --template-body file://Template2(Wordpress).yaml --parameters ParameterKey=KeyName,ParameterValue=*Your_KeyPair*');
         } 
         if(isset($_POST['end'])) { 
             shell_exec('aws cloudformation delete-stack --stack-name Wordpress');
