@@ -31,7 +31,7 @@
   <div class="container">
      <input type="submit" name="start" class="button buttonStart" value="Start Lab">
      <input type="submit" name="end" class="button buttonEnd" value="End Lab">
-     <a href="https://664936806613.signin.aws.amazon.com/console" class="button buttonLink" target="_blank">AWS Console</a>
+     <a href="https://signin.aws.amazon.com/console" class="button buttonLink" target="_blank">AWS Console</a>
     <div class="inputBox">
       <label class="textHeading">Username</label><input type="text" name="" id="uname" readonly="" value="*Your Username*">
       <img src="image/copy.jpg" height=20px width=20px  class="copy" onclick="copyUsername();">
