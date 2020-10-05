@@ -1,6 +1,6 @@
 <?php
   if(isset($_POST['start'])) { 
-            shell_exec('aws cloudformation create-stack --stack-name RDS --template-body file://C:\xampp\htdocs\AWS\Template1(VPC-EC2-DB).yaml --parameters ParameterKey=KeyName,ParameterValue=demo');
+            shell_exec('aws cloudformation create-stack --stack-name RDS --template-body file://Template1(VPC-EC2-DB).yaml --parameters ParameterKey=KeyName,ParameterValue=*KeyPairName*');
         } 
         if(isset($_POST['end'])) { 
             shell_exec('aws cloudformation delete-stack --stack-name RDS');
@@ -31,14 +31,14 @@
   <div class="container">
      <input type="submit" name="start" class="button buttonStart" value="Start Lab">
      <input type="submit" name="end" class="button buttonEnd" value="End Lab">
-     <a href="https://664936806613.signin.aws.amazon.com/console
+     <a href="https://signin.aws.amazon.com/console
 " class="button buttonLink" target="_blank">AWS Console</a>
     <div class="inputBox">
-      <label class="textHeading">Username</label><input type="text" name="" id="uname" readonly="" value="lab-user">
+      <label class="textHeading">Username</label><input type="text" name="" id="uname" readonly="" value="*Your Username*">
       <img src="image/copy.jpg" height=20px width=20px  class="copy" onclick="copyUsername();">
     </div>
     <div class="inputBox">
-      <label class="textHeading">Password</label><input type="text" name="" id="password" readonly="" value="student">
+      <label class="textHeading">Password</label><input type="text" name="" id="password" readonly="" value="*Your Password*">
       <img src="image/copy.jpg" height=20px width=20px  class="copy" onclick="copyPassword();">
     </div>
   </div>
@@ -136,17 +136,17 @@
 <p>During the lab setup, an Amazon EC2 Linux instance was created. You will now log in to the EC2 instance.</p>
 <h3>Windows Users: Using SSH to Connect</h3>
 <ol start="13">
-  <li>To connect to EC2 instance dowmload ppk file by clicking: <a href="demo.ppk" download><strong>Download PPK</strong></a>.</li>
+  <li>To connect to EC2 instance dowmload ppk file by clicking: <a href="*KeyPairLink*" download><strong>Download PPK</strong></a>.</li>
   <li>Save the file to the directory of your choice.</li>
 </ol>
 <p>You will use PuTTY to SSH to Amazon EC2 instances.</p>
-<p>If you do not have PuTTY installed on your computer, <a href="putty.exe" download>download it here</a>.</p>
+<p>If you do not have PuTTY installed on your computer, <a href="*PuttyDowmloadLink*" download>download it here</a>.</p>
 <ol start="15">
 <li>Open PuTTY.exe</li>
 <li>Configure the PuTTY to not timeout:</li>
 <ul>
 <li>Click <strong>Connection</strong></li>
-<li>Set <strong>Seconds between keepalives</strong> to <input readonly="" class="copyable-inline-input" size="2" type="text" value="30"></li>
+<li>Set <strong>Seconds between keepalives</strong> to <input readonly="" size="2" type="text" value="30"></li>
 </ul>
 <p>This allows you to keep the PuTTY session open for a longer period of time.</p>
 <li>Configure your PuTTY session:</li>
@@ -166,7 +166,7 @@
 </li>
 </ul>
 <li>Click <strong>Yes</strong>, to trust the host and connect to it.</li>
-<li>When prompted <strong>login as</strong>, enter: <input readonly="" class="copyable-inline-input" size="8" type="text" value="ec2-user"></li>
+<li>When prompted <strong>login as</strong>, enter: <input readonly=""  size="8" type="text" value="ec2-user"></li>
 <p>This will connect to your EC2 instance.</p>
 </ol>
 <h2>Task 3: Access the Database</h2>
@@ -186,7 +186,7 @@ It will look similar to:<br>
 </li>
 <li>Replace <strong>ENDPOINT</strong> with the RDS endpoint that you copied to your text editor</li>
 <li>Press <strong>Enter</strong></li>
-<li>When prompted for a password, enter: <input readonly="" class="copyable-inline-input" size="8" type="text" value="Pass.123">
+<li>When prompted for a password, enter: <input readonly="" size="8" type="text" value="Pass.123">
 Now you are logged in to the MySQL console. You should see the <strong>mysql&gt;</strong> prompt.</li>
 <li>Copy and paste the following command:</li>
 <pre><code><span >CREATE</span> <span>TABLE</span> <span >lab</span><span>.</span><span>staff</span> <span>(</span><span>firstname</span> <span>text</span><span>,</span> <span >lastname</span> <span >text</span><span>,</span> <span>phone</span> <span>text</span><span>);</span>
@@ -212,7 +212,7 @@ Sarah's details will be displayed. You can also experiment with other SQL comman
 <ol start="27">
 Follow these steps to close the console, end your lab.
 <li>Return to the AWS Management Console.</li>
-<li>On the navigation bar, click <strong>lab-user@6649-3680-6613</strong>, and then click <strong>Sign Out</strong>.</li>
+<li>On the navigation bar, click <strong>*Username*</strong>, and then click <strong>Sign Out</strong>.</li>
 <li>Click <span style="background-color:#D93025;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#D93025;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">End Lab</span></li>
 </ol>
 </div>
