@@ -1,6 +1,6 @@
 <?php
   if(isset($_POST['start'])) { 
-            shell_exec('aws cloudformation create-stack --stack-name VPC-EC2 --template-body file://C:\xampp\htdocs\18it040\AWS\AWSLAB\Template3_EC2-VPC.yaml --parameters ParameterKey=KeyName,ParameterValue=demo');
+            shell_exec('aws cloudformation create-stack --stack-name VPC-EC2 --template-body file://Template3_EC2-VPC.yaml --parameters ParameterKey=KeyName,ParameterValue=Your_KeyPair_name');
         } 
         if(isset($_POST['end'])) { 
             shell_exec('aws cloudformation delete-stack --stack-name VPC-EC2');
@@ -33,11 +33,11 @@
      <input type="submit" name="end" class="button buttonEnd" value="End Lab">
      <a href="https://664936806613.signin.aws.amazon.com/console" class="button buttonLink" target="_blank">AWS Console</a>
     <div class="inputBox">
-      <label class="textHeading">Username</label><input type="text" name="" id="uname" readonly="" value="lab-user">
+      <label class="textHeading">Username</label><input type="text" name="" id="uname" readonly="" value="*Your Username*">
       <img src="image/copy.jpg" height=20px width=20px  class="copy" onclick="copyUsername();">
     </div>
     <div class="inputBox">
-      <label class="textHeading">Password</label><input type="text" name="" id="password" readonly="" value="student">
+      <label class="textHeading">Password</label><input type="text" name="" id="password" readonly="" value="*Your Password*">
       <img src="image/copy.jpg" height=20px width=20px  class="copy" onclick="copyPassword();">
     </div>
   </div>
@@ -261,7 +261,7 @@
       <p>Follow these steps to close the console, end your lab.</p>
       <ol>
 <li>Return to the AWS Management Console.</li>
-<li>On the navigation bar, click <strong>lab-user@6649-3680-6613</strong>, and then click <strong>Sign Out</strong>.</li>
+<li>On the navigation bar, click <strong>*Username*</strong>, and then click <strong>Sign Out</strong>.</li>
 <li>Click <span style="background-color:#D93025;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#D93025;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">End Lab</span></p></li>
 </ol>
 </div>
