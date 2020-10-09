@@ -1,11 +1,3 @@
-<?php
-  if(isset($_POST['start'])) { 
-            shell_exec('aws cloudformation create-stack --stack-name RDS --template-body file://Template1(VPC-EC2-DB).yaml --parameters ParameterKey=KeyName,ParameterValue=*Your Key name*');
-        } 
-        if(isset($_POST['end'])) { 
-            shell_exec('aws cloudformation delete-stack --stack-name RDS');
-        }
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -217,21 +209,5 @@ Follow these steps to close the console, end your lab.
 </ol>
 </div>
 </div>
-<script type="text/javascript">
-
-  function copyUsername(){
-    var copyText = document.getElementById('uname');
-    copyText.select();
-    copyText.setSelectionRange(0,9999);
-    document.execCommand("copy");
-  }
-
-  function copyPassword(){
-    var copyText = document.getElementById('password');
-    copyText.select();
-    copyText.setSelectionRange(0,9999);
-    document.execCommand("copy");
-  }
-</script>
 </body>
 </html>
