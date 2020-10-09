@@ -1,11 +1,3 @@
-<?php
-  if(isset($_POST['start'])) { 
-            shell_exec('aws cloudformation create-stack --stack-name VPC-EC2 --template-body file://Template3_EC2-VPC.yaml --parameters ParameterKey=KeyName,ParameterValue=*Your_KeyPair*');
-        } 
-        if(isset($_POST['end'])) { 
-            shell_exec('aws cloudformation delete-stack --stack-name VPC-EC2');
-        }
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -266,21 +258,5 @@
 </ol>
 </div>
 </div>
-<script type="text/javascript">
-
-  function copyUsername(){
-    var copyText = document.getElementById('uname');
-    copyText.select();
-    copyText.setSelectionRange(0,9999);
-    document.execCommand("copy");
-  }
-
-  function copyPassword(){
-    var copyText = document.getElementById('password');
-    copyText.select();
-    copyText.setSelectionRange(0,9999);
-    document.execCommand("copy");
-  }
-</script>
 </body>
 </html>
